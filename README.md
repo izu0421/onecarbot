@@ -21,10 +21,22 @@ bar (App Store guideline 4.2):
 Accurate reaction-time measurement is a third: a WebView adds variable latency
 that matters on a task scored in milliseconds.
 
+## Sign-in
+
+Passwordless. `loginCode` (a Cloud Function in the website repo) emails a
+six-digit code; the app posts it back and gets a custom token. No password to
+forget, and no Universal Links / App Links to misconfigure — which is what
+Firebase's own email-link sign-in would have needed since Dynamic Links shut
+down in August 2025.
+
+The code can be read on a different device from the one signing in. The
+function reuses an existing account when the email already has one, so anyone
+who started on `app.html` keeps their uid and their history.
+
 ## Backend
 
-Nothing new. Same Firebase project as the website (`onecarbon-app`), same
-Firestore tree, same rules:
+Same Firebase project as the website (`onecarbon-app`), same Firestore tree,
+same rules:
 
 ```
 users/<uid>                       email, name, lastSeen, probiotic* fields
@@ -89,9 +101,10 @@ node — no simulator needed.
 - [ ] Privacy policy URL for both stores, and a privacy manifest for HealthKit
       data use — reusing <https://onecarbon.com/legal/privacy.html> means it
       must actually describe the app's Health access
-- [ ] Sign-in with Apple, if email/password sign-in stays (App Store guideline
-      4.8 requires it alongside third-party sign-in, not alongside plain email —
-      confirm before building it)
+- [ ] In-app account deletion — App Store guideline 5.1.1(v) requires it for
+      any app that creates accounts. Needs a Cloud Function; a client SDK
+      cannot delete the `users/<uid>` subtree recursively.
+- [ ] Deploy `loginCode` and set the `LOGIN_CODE_PEPPER` secret
 - [ ] Decide whether the `sendReminders` email and the local notification should
       both fire, or whether one suppresses the other
 - [ ] Real device testing of the battery — timing, and the trail-making tap
