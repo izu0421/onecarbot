@@ -76,10 +76,24 @@ src/
 scripts/logic-check.mjs   `npm test`
 ```
 
-## Running it
+## Testing on a phone today (Expo Go)
 
-The health modules are native, so **Expo Go will not work** — you need a
-development build:
+Expo Go needs nothing installed but the free app from the App Store, and no
+Apple Developer account. Everything works except the Health import, which is
+hidden there and reports `expo_go` if called.
+
+```bash
+npx expo start          # scan the QR with the Camera app
+```
+
+`loginCode` must be deployed first, or you cannot get past sign-in.
+
+An iOS Simulator is *not* a shortcut here — it requires the full Xcode install
+(~10GB), which a machine with only Command Line Tools does not have.
+
+## Development build
+
+Needed for Health import and for anything going to a store:
 
 ```bash
 npm install

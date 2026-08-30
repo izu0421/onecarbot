@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { setSleep, startDraft, getDraft } from '../../src/session';
-import { importLastNightSleep } from '../../src/health';
+import { importLastNightSleep, isExpoGo } from '../../src/health';
 import { Button, Tiles, Panel } from '../../src/ui';
 import { colors, space, type } from '../../src/theme';
 import { T } from '../../src/i18n';
@@ -52,6 +52,8 @@ export default function Sleep() {
       setImportNote(T('sleep.imported', { n: res.hours }));
     } else if (res.ok) {
       setImportNote(T('sleep.import_none'));
+    } else if (res.reason === 'expo_go') {
+      setImportNote('Health import needs a development build — enter it below for now.');
     } else {
       // Not an error the participant needs to act on — they just type it in.
       setImportNote(
@@ -82,13 +84,15 @@ export default function Sleep() {
 
       <Panel>
         <Text style={type.h3}>{T('sleep.hours')}</Text>
-        <Button
-          title={T('sleep.import')}
-          kind="ghost"
-          onPress={doImport}
-          busy={importing}
-          style={styles.importBtn}
-        />
+        {isExpoGo ? null : (
+          <Button
+            title={T('sleep.import')}
+            kind="ghost"
+            onPress={doImport}
+            busy={importing}
+            style={styles.importBtn}
+          />
+        )}
         {importNote ? <Text style={styles.note}>{importNote}</Text> : null}
         <Tiles options={HOURS} value={hours} onChange={(v) => { setHours(v); setSource('self_report'); }} />
       </Panel>

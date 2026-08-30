@@ -8,8 +8,15 @@
 // Everything here fails soft: if Health is unavailable or permission is denied,
 // the participant still types their hours into the slider.
 import { Platform } from 'react-native';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
 
 const MS_PER_HOUR = 3600000;
+
+// Expo Go ships a fixed set of native modules and neither health library is in
+// it. Detecting that up front gives an honest message instead of the confusing
+// failure you get from importing a module that was never linked.
+export const isExpoGo =
+  Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
 
 function lastNightWindow(now = new Date()) {
   // 18:00 the previous day → noon today. Wide enough for shift workers and
@@ -124,6 +131,7 @@ async function readAndroid() {
  */
 export async function importLastNightSleep() {
   try {
+    if (isExpoGo) return { ok: false, reason: 'expo_go' };
     if (Platform.OS === 'ios') return await readIos();
     if (Platform.OS === 'android') return await readAndroid();
     return { ok: false, reason: 'unsupported_platform' };
