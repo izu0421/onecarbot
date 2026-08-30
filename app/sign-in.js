@@ -56,7 +56,7 @@ export default function SignIn() {
     >
       <ScrollView contentContainerStyle={styles.wrap} keyboardShouldPersistTaps="handled">
         <Text style={styles.brand}>
-          One<Text style={styles.brandAccent}>Carbon</Text>
+          One<Text style={styles.brandAccent}>Carbot</Text>
         </Text>
         <Text style={type.h1}>{T('auth.h1')}</Text>
         <Text style={[type.body, styles.sub]}>{T('auth.sub')}</Text>

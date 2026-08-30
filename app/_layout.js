@@ -49,7 +49,7 @@ function Gate() {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="sign-in" options={{ headerShown: false }} />
       <Stack.Screen name="onboarding" options={{ title: 'About you' }} />
-      <Stack.Screen name="dashboard" options={{ title: 'OneCarbon', headerBackVisible: false }} />
+      <Stack.Screen name="dashboard" options={{ title: 'OneCarbot', headerBackVisible: false }} />
       <Stack.Screen name="session/sleep" options={{ title: 'Sleep & wellbeing' }} />
       {/* No gesture back out of a running battery — a swipe would bin the session. */}
       <Stack.Screen

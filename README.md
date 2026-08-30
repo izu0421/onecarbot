@@ -1,4 +1,4 @@
-# OneCarbon — mobile app
+# OneCarbot — mobile app
 
 React Native (Expo SDK 57) app for iOS and Android. Companion to the PROFILE
 trial: participants complete a cognitive session roughly every two weeks and
@@ -85,7 +85,7 @@ node — no simulator needed.
 - [ ] `app.json` → `extra.eas.projectId` is still `REPLACE_AFTER_EAS_INIT`
 - [ ] Icon and splash are the Expo template defaults
 - [ ] Apple Developer and Google Play accounts, and the bundle id
-      `com.onecarbon.app` registered in both
+      `com.onecarbon.onecarbot` registered in both
 - [ ] Privacy policy URL for both stores, and a privacy manifest for HealthKit
       data use — reusing <https://onecarbon.com/legal/privacy.html> means it
       must actually describe the app's Health access

@@ -103,7 +103,9 @@ export async function saveSession(uid, { results, sleepData }) {
       compliance_interval: sleepData.probiotic_compliance_interval ?? null,
       compliance_pct: sleepData.probiotic_compliance_pct ?? null,
     },
-    device: `${Platform.OS} ${Platform.Version} · ${Device.modelName || 'unknown'} · onecarbon-app`,
+    // Trailing tag identifies the client — app.html writes a plain user-agent
+    // string here, so analysis can tell app sessions from web ones.
+    device: `${Platform.OS} ${Platform.Version} · ${Device.modelName || 'unknown'} · onecarbot`,
   });
 
   return sessionId;
