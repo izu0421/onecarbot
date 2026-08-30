@@ -1,0 +1,68 @@
+{
+  "expo": {
+    "name": "OneCarbon",
+    "slug": "onecarbon-app",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "onecarbon",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F7F5F0"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.onecarbon.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSHealthShareUsageDescription": "OneCarbon reads your sleep data so you don't have to enter it by hand before a cognitive session.",
+        "NSHealthUpdateUsageDescription": "OneCarbon does not write to Health. This permission is required by iOS to request read access.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "entitlements": {
+        "com.apple.developer.healthkit": true,
+        "com.apple.developer.healthkit.access": []
+      }
+    },
+    "android": {
+      "package": "com.onecarbon.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundColor": "#F7F5F0"
+      },
+      "permissions": [
+        "android.permission.health.READ_SLEEP",
+        "android.permission.POST_NOTIFICATIONS"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      [
+        "expo-notifications",
+        {
+          "color": "#1f355a"
+        }
+      ],
+      [
+        "@kingstinct/react-native-healthkit",
+        {
+          "NSHealthShareUsageDescription": "OneCarbon reads your sleep data so you don't have to enter it by hand before a cognitive session.",
+          "background": false
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": false
+    },
+    "extra": {
+      "eas": {
+        "projectId": "REPLACE_AFTER_EAS_INIT"
+      }
+    },
+    "icon": "./assets/icon.png"
+  }
+}
