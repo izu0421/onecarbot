@@ -22,6 +22,7 @@ import {
 import { Platform } from 'react-native';
 import * as Device from 'expo-device';
 import { db } from './firebase';
+import { CONSENT_VERSION } from './consent-text';
 
 export async function touchUser(user) {
   await setDoc(
@@ -44,7 +45,12 @@ export async function saveProfile(uid, email, fields) {
   await setDoc(doc(db, 'users', uid, 'profile', 'data'), {
     ...fields,
     email,
+    // `consent` stays for compatibility with app.html's profile documents.
+    // The version and timestamp are what actually evidence informed consent if
+    // Apple or an ethics committee asks which text someone agreed to.
     consent: true,
+    consent_version: CONSENT_VERSION,
+    consented_at: new Date().toISOString(),
     createdAt: serverTimestamp(),
   });
 }

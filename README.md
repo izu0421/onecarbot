@@ -106,20 +106,4 @@ npx expo start --dev-client
 `npm test` runs the pure-logic checks (scoring parity, task generation) in plain
 node — no simulator needed.
 
-## Before this can ship
-
-- [ ] `app.json` → `extra.eas.projectId` is still `REPLACE_AFTER_EAS_INIT`
-- [ ] Icon and splash are the Expo template defaults
-- [ ] Apple Developer and Google Play accounts, and the bundle id
-      `com.onecarbon.onecarbot` registered in both
-- [ ] Privacy policy URL for both stores, and a privacy manifest for HealthKit
-      data use — reusing <https://onecarbon.com/legal/privacy.html> means it
-      must actually describe the app's Health access
-- [ ] In-app account deletion — App Store guideline 5.1.1(v) requires it for
-      any app that creates accounts. Needs a Cloud Function; a client SDK
-      cannot delete the `users/<uid>` subtree recursively.
-- [ ] Deploy `loginCode` and set the `LOGIN_CODE_PEPPER` secret
-- [ ] Decide whether the `sendReminders` email and the local notification should
-      both fire, or whether one suppresses the other
-- [ ] Real device testing of the battery — timing, and the trail-making tap
-      targets on small screens
+See [SHIPPING.md](SHIPPING.md) for the route to the App Store.

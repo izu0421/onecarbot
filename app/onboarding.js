@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Pressable } from 'react-native';
+import { Text, ScrollView, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../src/auth-context';
 import { saveProfile, loadProfile } from '../src/store';
@@ -42,13 +42,14 @@ export default function Onboarding() {
   const [sex, setSex] = useState(null);
   const [education, setEducation] = useState(null);
   const [medical, setMedical] = useState([]);
-  const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
   const ageNum = parseInt(age, 10);
   const ageValid = Number.isFinite(ageNum) && ageNum >= 18 && ageNum <= 120;
-  const canSubmit = name.trim() && ageValid && sex && consent;
+  // Consent is its own screen now (app/consent.js) and is reached before this
+  // one, so there is no checkbox here to tick twice.
+  const canSubmit = name.trim() && ageValid && sex;
 
   const submit = async () => {
     setError('');
@@ -94,13 +95,6 @@ export default function Onboarding() {
       <Text style={styles.label}>Medical history</Text>
       <Tiles options={MEDICAL} value={medical} onChange={setMedical} multi />
 
-      <Pressable style={styles.consent} onPress={() => setConsent((c) => !c)}>
-        <View style={[styles.check, consent && styles.checkOn]}>
-          {consent ? <Text style={styles.checkMark}>✓</Text> : null}
-        </View>
-        <Text style={styles.consentText}>{T('onboard.consent')}</Text>
-      </Pressable>
-
       <ErrorText>{error}</ErrorText>
 
       <Button
@@ -117,17 +111,5 @@ export default function Onboarding() {
 const styles = StyleSheet.create({
   wrap: { padding: space.lg, gap: space.md, paddingBottom: space.xxl },
   label: { ...type.small, color: colors.textMuted, fontWeight: '600', marginTop: space.sm },
-  consent: { flexDirection: 'row', gap: space.sm, alignItems: 'flex-start', marginTop: space.md },
-  check: {
-    width: 24,
-    height: 24,
-    borderWidth: 1.5,
-    borderColor: colors.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkOn: { backgroundColor: colors.accent },
-  checkMark: { color: '#fff', fontSize: 14, fontWeight: '700' },
-  consentText: { ...type.body, flex: 1, color: colors.text },
   cta: { marginTop: space.md },
 });

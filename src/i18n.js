@@ -28,7 +28,6 @@ const en = {
   'onboard.name': 'Name',
   'onboard.age': 'Age',
   'onboard.sex': 'Sex at birth',
-  'onboard.consent': 'I agree to my data being used for the PROFILE study.',
   'onboard.start': 'Start first session →',
 
   'dash.h1': 'Your dashboard',
@@ -97,7 +96,6 @@ const zh = {
   'onboard.name': '姓名',
   'onboard.age': '年龄',
   'onboard.sex': '出生时性别',
-  'onboard.consent': '我同意将我的数据用于 PROFILE 研究。',
   'onboard.start': '开始第一次测试 →',
 
   'dash.h1': '我的仪表板',
