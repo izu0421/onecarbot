@@ -15,7 +15,7 @@ checked 30 Aug 2026.
       screen until this is done.
       ```bash
       firebase functions:secrets:set LOGIN_CODE_PEPPER   # a long random string
-      firebase deploy --only functions:loginCode,firestore:rules
+      firebase deploy --only functions:loginCode,functions:deleteAccount,firestore:rules
       ```
 - [ ] **`YZ`** Install Expo Go on the iPhone, then from `onecarbon_app/`:
       `npx expo start` and scan the QR with the Camera app.
@@ -63,10 +63,16 @@ These are not judgement calls — the app gets rejected without them.
       review board must have approved the research, and Apple can demand proof.
       PROFILE (NCT07457242) should already have this — have the document to hand
       before submitting, and note who to ask if Apple queries it.
-- [ ] **`dev`** **In-app account deletion, guideline 5.1.1(v).** Required for any
-      app that creates accounts. Needs a Cloud Function — a client SDK cannot
-      delete the `users/<uid>` subtree recursively, and the auth user has to go
-      too.
+- [x] **`dev`** **In-app account deletion, guideline 5.1.1(v).** Done —
+      `deleteAccount` in `functions/index.js` plus Dashboard → Delete my account.
+      The uid comes from a verified ID token (`checkRevoked: true`), never from
+      the request body, so it can only ever delete the caller's own account.
+      Firestore subtree goes first via `recursiveDelete`, then the pending login
+      code, then the auth user.
+      - [ ] **`YZ`** Deploy it: it is in the same `firebase deploy --only
+            functions` as `loginCode`.
+      - [ ] **`YZ`** Test it on a throwaway account and confirm in the Firebase
+            console that `users/<uid>` and its subcollections are really gone.
 - [ ] **`dev`** **No medical claims, guideline 1.4.1.** The battery must never
       read as diagnosing anything. The disclaimer register already used on the
       website is the right one. Audit every string before submission.

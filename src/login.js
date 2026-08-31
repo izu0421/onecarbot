@@ -8,7 +8,9 @@ import { auth } from './firebase';
 
 // Same project and region as the other functions (us-central1, see
 // `firebase functions:list`).
-const ENDPOINT = 'https://us-central1-onecarbon-app.cloudfunctions.net/loginCode';
+const BASE = 'https://us-central1-onecarbon-app.cloudfunctions.net';
+const ENDPOINT = `${BASE}/loginCode`;
+const DELETE_ENDPOINT = `${BASE}/deleteAccount`;
 
 const MESSAGES = {
   bad_email: 'That email address does not look right.',
@@ -57,4 +59,46 @@ export async function verifyCode(email, code) {
   const { token } = await post({ action: 'verify', email, code });
   if (!token) throw new Error('Something went wrong. Try again.');
   await signInWithCustomToken(auth, token);
+}
+
+/**
+ * Delete the signed-in account and everything under it — App Store guideline
+ * 5.1.1(v). Irreversible.
+ *
+ * The uid is taken from the ID token server-side, never sent in the body, so
+ * this can only ever delete the caller's own account.
+ */
+export async function deleteAccount() {
+  const user = auth.currentUser;
+  if (!user) throw new Error('You are not signed in.');
+
+  // force-refresh, so a token that expired while the confirmation dialog was
+  // open does not turn into a confusing failure.
+  const idToken = await user.getIdToken(true);
+
+  let res;
+  try {
+    res = await fetch(DELETE_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      },
+      body: '{}',
+    });
+  } catch (_) {
+    throw new Error('No connection. Check your network and try again.');
+  }
+
+  if (!res.ok) {
+    throw new Error('Could not delete your account. Try again, or email team@onecarbon.com.');
+  }
+
+  // The auth user is gone server-side; clear the local session so the app
+  // returns to sign-in rather than sitting on a dead token.
+  try {
+    await auth.signOut();
+  } catch (_) {
+    // Already invalid — the gate will bounce to sign-in regardless.
+  }
 }

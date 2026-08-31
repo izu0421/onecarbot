@@ -3,6 +3,7 @@ import { View, Text, ScrollView, StyleSheet, RefreshControl, Pressable, Alert } 
 import { useRouter, useFocusEffect } from 'expo-router';
 import { signOut } from 'firebase/auth';
 import { auth } from '../src/firebase';
+import { deleteAccount } from '../src/login';
 import { useAuth } from '../src/auth-context';
 import { loadSessions, loadUserDoc, setProbioticStart } from '../src/store';
 import { compositeScore, domainScores } from '../src/scoring';
@@ -24,6 +25,7 @@ export default function Dashboard() {
   const [userDoc, setUserDoc] = useState({});
   const [refreshing, setRefreshing] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -55,6 +57,29 @@ export default function Dashboard() {
   const begin = () => {
     startDraft();
     router.push('/session/sleep');
+  };
+
+  // Two taps, and the second one spells out that it cannot be undone. Deleting
+  // a participant's whole history by mis-tap would be unrecoverable.
+  const confirmDelete = () => {
+    Alert.alert(T('acct.delete_title'), T('acct.delete_body'), [
+      { text: T('acct.cancel'), style: 'cancel' },
+      {
+        text: T('acct.delete_confirm'),
+        style: 'destructive',
+        onPress: async () => {
+          setDeleting(true);
+          try {
+            await deleteAccount();
+            // No navigation needed — the auth listener drops `user`, and the
+            // gate in _layout.js sends us to sign-in.
+          } catch (e) {
+            setDeleting(false);
+            Alert.alert(T('acct.delete_failed'), e?.message || '');
+          }
+        },
+      },
+    ]);
   };
 
   const logProbiotic = async () => {
@@ -135,6 +160,14 @@ export default function Dashboard() {
       <Pressable onPress={() => signOut(auth)}>
         <Text style={styles.signout}>{T('nav.signout')}</Text>
       </Pressable>
+
+      {/* Required by App Store guideline 5.1.1(v), and promised by the
+          withdrawal section of the consent screen. */}
+      <Pressable onPress={confirmDelete} disabled={deleting}>
+        <Text style={styles.delete}>
+          {deleting ? T('acct.deleting') : T('acct.delete')}
+        </Text>
+      </Pressable>
     </ScrollView>
   );
 }
@@ -152,4 +185,5 @@ const styles = StyleSheet.create({
   domainScore: { ...type.small, color: colors.text, width: 28, textAlign: 'right', fontVariant: ['tabular-nums'] },
   bigNum: { fontSize: 32, fontWeight: '600', color: colors.text, fontVariant: ['tabular-nums'] },
   signout: { ...type.small, color: colors.accent, textAlign: 'center', marginTop: space.lg },
+  delete: { ...type.small, color: colors.danger, textAlign: 'center', marginTop: space.md },
 });

@@ -71,6 +71,16 @@ const en = {
   'prob.update_btn': 'Update start date',
   'prob.active': 'Taking since {d}',
 
+  'acct.delete': 'Delete my account',
+  'acct.deleting': 'Deleting…',
+  'acct.delete_title': 'Delete your account?',
+  'acct.delete_body':
+    'This permanently removes your sign-in and your entire history — profile, ' +
+    'every session and every result. It cannot be undone, and we cannot get it back for you.',
+  'acct.delete_confirm': 'Delete everything',
+  'acct.cancel': 'Cancel',
+  'acct.delete_failed': 'Could not delete your account',
+
   'notif.title': 'Time for your next session',
   'notif.body': "It's been two weeks since your last cognitive session. It takes about 10 minutes.",
 };
@@ -138,6 +148,16 @@ const zh = {
   'prob.log_btn': '记录开始日期',
   'prob.update_btn': '更新开始日期',
   'prob.active': '自 {d} 起服用',
+
+  'acct.delete': '删除我的账号',
+  'acct.deleting': '正在删除…',
+  'acct.delete_title': '确定删除账号？',
+  'acct.delete_body':
+    '这将永久删除您的登录信息及全部记录 —— 个人资料、每一次测试和所有结果。' +
+    '此操作无法撤销，我们也无法为您恢复。',
+  'acct.delete_confirm': '全部删除',
+  'acct.cancel': '取消',
+  'acct.delete_failed': '删除账号失败',
 
   'notif.title': '该做下一次测试了',
   'notif.body': '距离上次认知测试已过去两周。大约需要 10 分钟。',
