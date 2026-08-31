@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useAuth } from '../../src/auth-context';
+import { loadUserDoc, loadSessions } from '../../src/store';
 import { setSleep, startDraft, getDraft } from '../../src/session';
+import { intervalDaysFrom, complianceFields } from '../../src/compliance';
 import { importLastNightSleep, isExpoGo } from '../../src/health';
 import { Button, Tiles, Panel } from '../../src/ui';
 import { colors, space, type } from '../../src/theme';
@@ -11,6 +14,16 @@ const HOURS = ['<4', '4–5', '5–6', '6–7', '7–8', '8–9', '>9'];
 const QUALITY = ['Very good', 'Good', 'Average', 'Poor', 'Very poor'];
 const DAYTIME = ['No drowsiness', 'Some drowsiness', 'Often drowsy'];
 const ONSET = ['<15 min', '15–30 min', '30–60 min', '>60 min'];
+const TROUBLE = ['Not at all', 'Once or twice', 'Several times', 'Most of the night'];
+const WAKE_CAUSES = [
+  'Noise',
+  'Light',
+  'Needed the toilet',
+  'Pain or discomfort',
+  'Worry',
+  'Too hot or cold',
+  'No idea',
+];
 const MOOD = ['Very good', 'Good', 'Neutral', 'Low', 'Very low'];
 const STRESS = ['None', 'Mild', 'Moderate', 'High'];
 
@@ -27,6 +40,7 @@ function bucketForHours(h) {
 
 export default function Sleep() {
   const router = useRouter();
+  const { user } = useAuth();
   if (!getDraft()) startDraft();
 
   const [hours, setHours] = useState(null);
@@ -35,6 +49,38 @@ export default function Sleep() {
   const [onset, setOnset] = useState(null);
   const [mood, setMood] = useState(null);
   const [stress, setStress] = useState(null);
+  const [troubleFall, setTroubleFall] = useState(null);
+  const [troubleStay, setTroubleStay] = useState(null);
+  const [wakeCauses, setWakeCauses] = useState([]);
+
+  // Adherence. Only asked once someone has actually logged a start date —
+  // otherwise the question is meaningless.
+  const [interval, setInterval_] = useState(null);
+  const [daysTaken, setDaysTaken] = useState(null);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const [ud, sessions] = await Promise.all([loadUserDoc(user.uid), loadSessions(user.uid, 1)]);
+        if (cancelled || !ud?.probioticStart || ud.probioticActive === false) return;
+        const last = sessions[0]?.completedAt;
+        const lastAt = last ? (last.toDate ? last.toDate() : new Date(last)) : null;
+        setInterval_(intervalDaysFrom(lastAt, ud.probioticStart));
+      } catch (_) {
+        // Not worth blocking a session over — the question is simply not shown.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  const compliance = useMemo(
+    () => complianceFields(daysTaken, interval),
+    [interval, daysTaken]
+  );
 
   const [importing, setImporting] = useState(false);
   const [importNote, setImportNote] = useState('');
@@ -73,6 +119,11 @@ export default function Sleep() {
       onset,
       mood,
       stress,
+      trouble_fall: troubleFall,
+      trouble_stay: troubleStay,
+      wake_causes: wakeCauses,
+      // Adherence, derived below rather than asked twice.
+      ...compliance,
     });
     router.push('/session/battery');
   };
@@ -106,11 +157,51 @@ export default function Sleep() {
       <Text style={styles.label}>Time to fall asleep</Text>
       <Tiles options={ONSET} value={onset} onChange={setOnset} />
 
+      <Text style={styles.label}>Trouble falling asleep</Text>
+      <Tiles options={TROUBLE} value={troubleFall} onChange={setTroubleFall} />
+
+      <Text style={styles.label}>Woke during the night</Text>
+      <Tiles options={TROUBLE} value={troubleStay} onChange={setTroubleStay} />
+
+      {troubleStay && troubleStay !== 'Not at all' ? (
+        <>
+          <Text style={styles.label}>What woke you? (any that apply)</Text>
+          <Tiles options={WAKE_CAUSES} value={wakeCauses} onChange={setWakeCauses} multi />
+        </>
+      ) : null}
+
       <Text style={styles.label}>Mood today</Text>
       <Tiles options={MOOD} value={mood} onChange={setMood} />
 
       <Text style={styles.label}>Stress level today</Text>
       <Tiles options={STRESS} value={stress} onChange={setStress} />
+
+      {interval != null ? (
+        <Panel title={T('comp.title')} style={styles.compliance}>
+          <Text style={type.body}>{T('comp.sub', { n: interval })}</Text>
+          <Tiles
+            options={Array.from({ length: interval + 1 }, (_, i) => ({
+              value: i,
+              label: String(i),
+            }))}
+            value={daysTaken}
+            onChange={setDaysTaken}
+          />
+          {daysTaken != null ? (
+            <Text style={styles.note}>
+              {daysTaken === interval
+                ? T('comp.every_day')
+                : daysTaken === 0
+                  ? T('comp.none')
+                  : T('comp.some', {
+                      pct: Math.round((daysTaken / interval) * 100),
+                      d: daysTaken,
+                      n: interval,
+                    })}
+            </Text>
+          ) : null}
+        </Panel>
+      ) : null}
 
       <Button title={T('sleep.continue')} onPress={cont} disabled={!hours} style={styles.cta} />
     </ScrollView>
@@ -122,5 +213,6 @@ const styles = StyleSheet.create({
   label: { ...type.small, color: colors.textMuted, fontWeight: '600', marginTop: space.sm },
   importBtn: { alignSelf: 'flex-start', paddingHorizontal: space.lg, minHeight: 44 },
   note: { ...type.small, color: colors.accent },
+  compliance: { marginTop: space.md },
   cta: { marginTop: space.lg },
 });

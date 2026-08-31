@@ -79,6 +79,10 @@ export default function Results() {
         ))}
       </Panel>
 
+      {/* Guideline 1.4.1, and simply true: one session is noisy. Without this
+          a number on its own invites people to read it as a verdict. */}
+      <Text style={styles.caveat}>{T('results.caveat')}</Text>
+
       <Button
         title={busy ? T('results.saving') : T('results.save')}
         onPress={save}
@@ -107,5 +111,6 @@ const styles = StyleSheet.create({
   barTrack: { flex: 1, height: 6, backgroundColor: colors.bgAlt, borderRadius: 3, overflow: 'hidden' },
   barFill: { height: 6, backgroundColor: colors.accent },
   domainScore: { ...type.small, color: colors.text, width: 28, textAlign: 'right', fontVariant: ['tabular-nums'] },
+  caveat: { ...type.small, lineHeight: 18, marginTop: space.sm },
   cta: { marginTop: space.lg },
 });

@@ -83,9 +83,12 @@ These are not judgement calls — the app gets rejected without them.
             functions` as `loginCode`.
       - [ ] **`YZ`** Test it on a throwaway account and confirm in the Firebase
             console that `users/<uid>` and its subcollections are really gone.
-- [ ] **`dev`** **No medical claims, guideline 1.4.1.** The battery must never
-      read as diagnosing anything. The disclaimer register already used on the
-      website is the right one. Audit every string before submission.
+- [x] **`dev`** **No medical claims, guideline 1.4.1.** Audited every
+      user-facing string: no diagnose/treat/prevent/cure/improve/protect language
+      anywhere outside the disclaimer itself. Added a caveat under the results
+      score, since a bare number invites being read as a verdict.
+      - [ ] **`YZ`** Re-audit the App Store listing copy when it is written —
+            the description is user-facing too.
 
 ---
 
@@ -133,12 +136,12 @@ Not blockers, but the app is thinner than the web version until these land.
       look like a dramatic decline. Sessions with no usable score are dropped
       rather than plotted as zero. Data shaping lives in `scoring.js` so it is
       covered by `npm test`.
-- [ ] **`dev`** **Compliance capture.** `probiotic_compliance_days`,
-      `_interval` and `_pct` currently always write `null`. That is the trial's
-      adherence measure.
-- [ ] **`dev`** **Three missing sleep questions** — `trouble_fall`,
-      `trouble_stay`, `wake_causes` all write `null`. The web asks nine, the app
-      asks six.
+- [x] **`dev`** **Compliance capture.** Done — asked on the sleep screen once a
+      1C-01 start date has been logged. `src/compliance.js` is pure and tested.
+      Interval is capped at 30 days: `app.html` has no cap, so someone returning
+      after six months gets 180 tiles.
+- [x] **`dev`** **Three missing sleep questions.** Done — trouble falling
+      asleep, waking in the night, and what woke you (only shown if they woke).
 - [ ] **`dev`** Feedback form — `app.html` has one, and the `feedback` form id
       already exists in `functions/index.js`.
 - [ ] **`dev`** Google sign-in — `app.html` has it on web. Note that adding any

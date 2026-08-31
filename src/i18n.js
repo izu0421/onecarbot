@@ -51,6 +51,12 @@ const en = {
   'sleep.import_none': 'No sleep data found for last night',
   'sleep.continue': 'Start cognitive tests →',
 
+  'comp.title': '1C-01 over the last {n} days',
+  'comp.sub': 'On how many of the last {n} days did you take 1C-01?',
+  'comp.every_day': 'Every day.',
+  'comp.none': 'None reported.',
+  'comp.some': '{pct}% — {d} of {n} days',
+
   'battery.h1': 'Cognitive assessment',
   'battery.sub': 'Takes about 10 minutes. Find a quiet place and minimise distractions.',
   'battery.session': 'Session {n}',
@@ -64,6 +70,9 @@ const en = {
   'results.delta_down': '▼ {n} from last session',
   'results.delta_same': 'Same as last session',
   'results.first': 'Your first session',
+  'results.caveat':
+    'One session bounces around — sleep, caffeine, time of day and plain practice all move '
+    + 'these numbers. The trend over several sessions is the part worth looking at.',
   'results.save': 'Save & view dashboard →',
   'results.saving': 'Saving…',
 
@@ -134,6 +143,12 @@ const zh = {
   'sleep.import_none': '未找到昨晚的睡眠数据',
   'sleep.continue': '开始认知测试 →',
 
+  'comp.title': '过去 {n} 天的 1C-01 服用情况',
+  'comp.sub': '过去 {n} 天中，您有多少天服用了 1C-01？',
+  'comp.every_day': '每天都服用。',
+  'comp.none': '未服用。',
+  'comp.some': '{pct}% —— {n} 天中的 {d} 天',
+
   'battery.h1': '认知评估',
   'battery.sub': '大约需要 10 分钟。请找一个安静的地方，尽量减少干扰。',
   'battery.session': '第 {n} 次测试',
@@ -147,6 +162,9 @@ const zh = {
   'results.delta_down': '▼ 较上次下降 {n}',
   'results.delta_same': '与上次持平',
   'results.first': '这是您的第一次测试',
+  'results.caveat':
+    '单次测试的分数波动很大 —— 睡眠、咖啡因、测试时间以及熟练度都会影响结果。'
+    + '真正值得关注的是多次测试之后的趋势。',
   'results.save': '保存并查看仪表板 →',
   'results.saving': '保存中…',
 

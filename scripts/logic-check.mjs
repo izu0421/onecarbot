@@ -1,4 +1,5 @@
 import { compositeScore, domainScores, sessionsToPoints } from '../src/scoring.js';
+import { intervalDaysFrom, complianceFields, MAX_INTERVAL_DAYS } from '../src/compliance.js';
 import { makeMatrix, makeTrailNodes, makePalRound, scoreRt, MATRIX_SHAPES } from '../src/battery/tasks.js';
 
 let fail = 0;
@@ -67,6 +68,25 @@ ok('Firestore Timestamp shape is handled',
 ok('sessions with no usable score are dropped, not plotted as zero',
    sessionsToPoints([{ results: {}, completedAt: new Date() }, ...sessions]).length === 2);
 ok('empty input is safe', sessionsToPoints([]).length === 0 && sessionsToPoints(undefined).length === 0);
+
+// ── compliance ──
+const NOW = new Date('2026-08-31T09:00:00Z').getTime();
+ok('interval = days since last session',
+   intervalDaysFrom(new Date('2026-08-17T09:00:00Z'), '2026-01-01', NOW) === 14);
+ok('first session falls back to the 1C-01 start date',
+   intervalDaysFrom(null, '2026-08-21', NOW) === 10);
+ok('no session and no start date -> 14 day default',
+   intervalDaysFrom(null, null, NOW) === 14);
+ok('never less than 1 day',
+   intervalDaysFrom(new Date('2026-08-31T08:00:00Z'), null, NOW) === 1);
+ok(`long gap is capped at ${MAX_INTERVAL_DAYS}, not 180 tiles`,
+   intervalDaysFrom(new Date('2026-03-01T09:00:00Z'), null, NOW) === MAX_INTERVAL_DAYS);
+ok('unanswered compliance writes nothing, rather than zero',
+   Object.keys(complianceFields(null, 14)).length === 0);
+ok('zero days is recorded as a real answer',
+   complianceFields(0, 14).probiotic_compliance_pct === 0);
+ok('percentage is right',
+   complianceFields(7, 14).probiotic_compliance_pct === 50);
 
 console.log(fail ? `\n${fail} FAILED` : '\nall passed');
 process.exit(fail ? 1 : 0);
