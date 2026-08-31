@@ -49,20 +49,30 @@ D-U-N-S number is the slowest single item on this page.
 
 These are not judgement calls — the app gets rejected without them.
 
-- [x] **`dev`** **Informed consent, guideline 5.1.3(iii).** Done — `app/consent.js`
-      plus `src/consent-text.js`, shown between sign-in and onboarding. Seven
-      sections covering nature/purpose/duration, procedures, risks and benefits,
-      data and sharing, withdrawal, and contact. Agree stays disabled until the
-      text has actually been scrolled to the end, and `consent_version` +
-      `consented_at` are written into the profile document.
-      - [ ] **`YZ`** **Check the wording against the ethics-approved participant
-            information sheet for NCT07457242.** Where they disagree, the approved
-            document wins and `src/consent-text.js` must be corrected. Bump
-            `CONSENT_VERSION` when it changes.
-- [ ] **`YZ`** **Ethics approval, guideline 5.1.3(iv).** An independent ethics
-      review board must have approved the research, and Apple can demand proof.
-      PROFILE (NCT07457242) should already have this — have the document to hand
-      before submitting, and note who to ask if Apple queries it.
+> **Positioning decision, 31 Aug 2026.** There is no ethics approval, so
+> OneCarbot ships as a **personal tracking app, not a research app**. That takes
+> it out of guideline 5.1.3 entirely. It only holds if it stays true:
+> **sessions written from this app must not be analysed as trial data.** They
+> carry `client: 'onecarbot'` and `research_use: false` so they can be filtered
+> out mechanically. Using them as study data later needs real informed consent
+> and ethics approval first — flipping the flag is not the fix.
+
+- [x] **`dev`** **Guideline 5.1.3 avoided by not being a research app.** The
+      research consent screen was built and then removed once we established
+      there is no ethics approval. Onboarding now carries a plain
+      not-a-medical-app disclaimer and data note, recorded as `terms_version` /
+      `terms_accepted_at`. Medical history is no longer collected at all —
+      special-category data with no purpose in a personal tracker, and
+      guideline 5.1.1 says not to ask for what is not needed.
+- [ ] **`YZ`** **Keep it true.** Nothing in the app may claim or imply that a
+      session contributes to PROFILE or any study. If that changes, 5.1.3(iii)
+      and (iv) come back and approval is needed before submission.
+- [ ] **`YZ`** **Separate question, worth resolving anyway:** PROFILE is
+      registered publicly (NCT07457242, linked from `trials/index.html`, and the
+      site calls it a clinical trial). A registered human study collecting health
+      data normally needs ethics approval regardless of this app — for the trial
+      itself, for UK GDPR special-category grounds, and for any future
+      publication. Not an App Store issue, but do not let the repositioning bury it.
 - [x] **`dev`** **In-app account deletion, guideline 5.1.1(v).** Done —
       `deleteAccount` in `functions/index.js` plus Dashboard → Delete my account.
       The uid comes from a verified ID token (`checkRevoked: true`), never from

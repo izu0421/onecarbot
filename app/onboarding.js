@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
-import { Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from '../src/auth-context';
 import { saveProfile, loadProfile } from '../src/store';
-import { Button, Field, Tiles, ErrorText } from '../src/ui';
-import { colors, space, type } from '../src/theme';
+import { Button, Field, Tiles, ErrorText, Panel } from '../src/ui';
+import { DISCLAIMER, DATA_NOTE, PRIVACY_URL } from '../src/app-info';
+import { colors, space, radius, type } from '../src/theme';
 import { T } from '../src/i18n';
 
-// Same option sets as app.html's onboarding, so profile documents written by
-// either client are comparable.
+// Age and sex at birth stay because scores are read against a reference group.
+// Education is optional and affects some norms.
+//
+// Medical history is deliberately NOT asked. It is special-category data with
+// no purpose in a tool that only shows you your own trend, and guideline 5.1.1
+// says not to require personal information that is not directly relevant to
+// core functionality. app.html asks for it because that is the trial's intake
+// form; this app is not the trial.
 const SEX = [
   { value: 'female', label: 'Female' },
   { value: 'male', label: 'Male' },
@@ -24,15 +31,6 @@ const EDUCATION = [
   { value: 'postgrad', label: 'Postgraduate' },
 ];
 
-const MEDICAL = [
-  { value: 'none', label: 'None' },
-  { value: 'hypertension', label: 'High blood pressure' },
-  { value: 'diabetes', label: 'Diabetes' },
-  { value: 'depression', label: 'Depression or anxiety' },
-  { value: 'neuro', label: 'Neurological condition' },
-  { value: 'prefer_not', label: 'Prefer not to say' },
-];
-
 export default function Onboarding() {
   const { user, setProfile } = useAuth();
   const router = useRouter();
@@ -41,15 +39,13 @@ export default function Onboarding() {
   const [age, setAge] = useState('');
   const [sex, setSex] = useState(null);
   const [education, setEducation] = useState(null);
-  const [medical, setMedical] = useState([]);
+  const [accepted, setAccepted] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
 
   const ageNum = parseInt(age, 10);
   const ageValid = Number.isFinite(ageNum) && ageNum >= 18 && ageNum <= 120;
-  // Consent is its own screen now (app/consent.js) and is reached before this
-  // one, so there is no checkbox here to tick twice.
-  const canSubmit = name.trim() && ageValid && sex;
+  const canSubmit = name.trim() && ageValid && sex && accepted;
 
   const submit = async () => {
     setError('');
@@ -60,7 +56,6 @@ export default function Onboarding() {
         age: ageNum,
         sex,
         education,
-        medical_history: medical,
       });
       // Re-read rather than trusting the local object — the gate keys off this.
       setProfile(await loadProfile(user.uid));
@@ -89,11 +84,23 @@ export default function Onboarding() {
       <Text style={styles.label}>{T('onboard.sex')}</Text>
       <Tiles options={SEX} value={sex} onChange={setSex} />
 
-      <Text style={styles.label}>Highest education</Text>
+      <Text style={styles.label}>{T('onboard.education')}</Text>
       <Tiles options={EDUCATION} value={education} onChange={setEducation} />
 
-      <Text style={styles.label}>Medical history</Text>
-      <Tiles options={MEDICAL} value={medical} onChange={setMedical} multi />
+      <Panel title={T('onboard.before_start')} style={styles.notice}>
+        <Text style={styles.noticeBody}>{DISCLAIMER}</Text>
+        <Text style={styles.noticeBody}>{DATA_NOTE}</Text>
+        <Pressable onPress={() => Linking.openURL(PRIVACY_URL)}>
+          <Text style={styles.link}>{T('onboard.privacy_link')}</Text>
+        </Pressable>
+      </Panel>
+
+      <Pressable style={styles.acceptRow} onPress={() => setAccepted((a) => !a)}>
+        <View style={[styles.check, accepted && styles.checkOn]}>
+          {accepted ? <Text style={styles.checkMark}>✓</Text> : null}
+        </View>
+        <Text style={styles.acceptText}>{T('onboard.accept')}</Text>
+      </Pressable>
 
       <ErrorText>{error}</ErrorText>
 
@@ -111,5 +118,21 @@ export default function Onboarding() {
 const styles = StyleSheet.create({
   wrap: { padding: space.lg, gap: space.md, paddingBottom: space.xxl },
   label: { ...type.small, color: colors.textMuted, fontWeight: '600', marginTop: space.sm },
+  notice: { marginTop: space.md, backgroundColor: colors.bgAlt },
+  noticeBody: { ...type.body, fontSize: 14, lineHeight: 21 },
+  link: { ...type.small, color: colors.accent, marginTop: space.xs },
+  acceptRow: { flexDirection: 'row', gap: space.sm, alignItems: 'flex-start' },
+  check: {
+    width: 24,
+    height: 24,
+    borderWidth: 1.5,
+    borderColor: colors.accent,
+    borderRadius: radius.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkOn: { backgroundColor: colors.accent },
+  checkMark: { color: '#fff', fontSize: 14, fontWeight: '700' },
+  acceptText: { ...type.body, flex: 1, color: colors.text, fontSize: 15 },
   cta: { marginTop: space.md },
 });

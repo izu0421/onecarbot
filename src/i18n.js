@@ -10,7 +10,7 @@ import { getLocales } from 'expo-localization';
 const en = {
   'nav.signout': 'Sign out',
   'auth.h1': 'Track your cognition',
-  'auth.sub': 'Sign in to reach your longitudinal cognitive dashboard.',
+  'auth.sub': 'Seven short tasks, about ten minutes, as often as you like. Your scores stay yours.',
   'auth.email': 'Email',
   'auth.email_ph': 'you@example.com',
   'auth.send_code': 'Email me a code',
@@ -24,10 +24,14 @@ const en = {
   'err.save': 'Could not save: ',
 
   'onboard.h1': 'A few details first',
-  'onboard.sub': 'These let us compare your scores against the right reference group. You can change them later.',
+  'onboard.sub': 'These let your scores be compared against a sensible reference group rather than the general population.',
   'onboard.name': 'Name',
   'onboard.age': 'Age',
   'onboard.sex': 'Sex at birth',
+  'onboard.education': 'Highest education (optional)',
+  'onboard.before_start': 'Before you start',
+  'onboard.privacy_link': 'Read the privacy policy →',
+  'onboard.accept': 'I understand this is not a medical app, and I agree to how my data is handled.',
   'onboard.start': 'Start first session →',
 
   'dash.h1': 'Your dashboard',
@@ -66,7 +70,7 @@ const en = {
   'domain.panel_title': 'Domain breakdown',
 
   'prob.panel_title': '1C-01 Live Cultures',
-  'prob.prompt': 'Have you started taking 1C-01? Log your start date so we can track the effect on your cognition.',
+  'prob.prompt': 'Taking 1C-01? Log the date you started so you can see it alongside your own scores.',
   'prob.log_btn': 'Log start date',
   'prob.update_btn': 'Update start date',
   'prob.active': 'Taking since {d}',
@@ -88,7 +92,7 @@ const en = {
 const zh = {
   'nav.signout': '退出登录',
   'auth.h1': '追踪您的认知能力',
-  'auth.sub': '登录以访问您的纵向认知评估仪表板。',
+  'auth.sub': '七项简短任务，约十分钟，随时可做。您的数据属于您自己。',
   'auth.email': '电子邮件',
   'auth.email_ph': '您的邮箱',
   'auth.send_code': '发送验证码',
@@ -102,10 +106,14 @@ const zh = {
   'err.save': '保存失败：',
 
   'onboard.h1': '先填写几项信息',
-  'onboard.sub': '这些信息用于将您的分数与合适的参照组比较。之后可以修改。',
+  'onboard.sub': '这些信息用于将您的分数与合适的参照组比较，而非与总体人群比较。',
   'onboard.name': '姓名',
   'onboard.age': '年龄',
   'onboard.sex': '出生时性别',
+  'onboard.education': '最高学历（选填）',
+  'onboard.before_start': '开始之前',
+  'onboard.privacy_link': '阅读隐私政策 →',
+  'onboard.accept': '我明白这不是医疗应用，并同意上述数据处理方式。',
   'onboard.start': '开始第一次测试 →',
 
   'dash.h1': '我的仪表板',
@@ -144,7 +152,7 @@ const zh = {
   'domain.panel_title': '各领域细分',
 
   'prob.panel_title': '1C-01 益生菌',
-  'prob.prompt': '您开始服用 1C-01 了吗？记录开始日期，以便我们追踪其对认知的影响。',
+  'prob.prompt': '正在服用 1C-01？记录开始日期，即可与您自己的分数对照查看。',
   'prob.log_btn': '记录开始日期',
   'prob.update_btn': '更新开始日期',
   'prob.active': '自 {d} 起服用',

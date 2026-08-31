@@ -22,7 +22,7 @@ import {
 import { Platform } from 'react-native';
 import * as Device from 'expo-device';
 import { db } from './firebase';
-import { CONSENT_VERSION } from './consent-text';
+import { TERMS_VERSION } from './app-info';
 
 export async function touchUser(user) {
   await setDoc(
@@ -45,12 +45,11 @@ export async function saveProfile(uid, email, fields) {
   await setDoc(doc(db, 'users', uid, 'profile', 'data'), {
     ...fields,
     email,
-    // `consent` stays for compatibility with app.html's profile documents.
-    // The version and timestamp are what actually evidence informed consent if
-    // Apple or an ethics committee asks which text someone agreed to.
-    consent: true,
-    consent_version: CONSENT_VERSION,
-    consented_at: new Date().toISOString(),
+    // NOT research consent — OneCarbot is a personal tracking app (see the note
+    // at the top of app-info.js). This records which version of the disclaimer
+    // and data note someone accepted at onboarding.
+    terms_version: TERMS_VERSION,
+    terms_accepted_at: new Date().toISOString(),
     createdAt: serverTimestamp(),
   });
 }
@@ -112,6 +111,16 @@ export async function saveSession(uid, { results, sleepData }) {
     // Trailing tag identifies the client — app.html writes a plain user-agent
     // string here, so analysis can tell app sessions from web ones.
     device: `${Platform.OS} ${Platform.Version} · ${Device.modelName || 'unknown'} · onecarbot`,
+
+    // ── Do not analyse these as trial data. ──
+    // OneCarbot is a personal tracking app: nobody using it has given research
+    // consent, and there is no ethics approval covering them. These two fields
+    // exist so trial analysis can filter them out mechanically rather than by
+    // remembering to. If app sessions are ever to be used as study data, that
+    // needs real informed consent and ethics approval FIRST — flipping this
+    // flag is not the fix. See the note at the top of app-info.js.
+    client: 'onecarbot',
+    research_use: false,
   });
 
   return sessionId;

@@ -18,14 +18,12 @@ function Gate() {
       if (first !== 'sign-in') router.replace('/sign-in');
       return;
     }
-    // Signed in but no profile document — they have never been through consent
-    // and onboarding. Consent comes first; both screens are allowed to stay put
-    // so the consent -> onboarding step is not bounced back.
+    // Signed in but no profile document — they have never completed onboarding.
     if (!profile) {
-      if (first !== 'consent' && first !== 'onboarding') router.replace('/consent');
+      if (first !== 'onboarding') router.replace('/onboarding');
       return;
     }
-    if (first === 'sign-in' || first === 'consent' || first === 'onboarding' || first === undefined) {
+    if (first === 'sign-in' || first === 'onboarding' || first === undefined) {
       router.replace('/dashboard');
     }
   }, [ready, user, profile, segments, router]);
@@ -50,12 +48,10 @@ function Gate() {
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="sign-in" options={{ headerShown: false }} />
-      {/* No back gesture out of consent — leaving it half-read is not consent. */}
       <Stack.Screen
-        name="consent"
-        options={{ title: 'PROFILE study', headerBackVisible: false, gestureEnabled: false }}
+        name="onboarding"
+        options={{ title: 'About you', headerBackVisible: false }}
       />
-      <Stack.Screen name="onboarding" options={{ title: 'About you' }} />
       <Stack.Screen name="dashboard" options={{ title: 'OneCarbot', headerBackVisible: false }} />
       <Stack.Screen name="session/sleep" options={{ title: 'Sleep & wellbeing' }} />
       {/* No gesture back out of a running battery — a swipe would bin the session. */}

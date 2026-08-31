@@ -161,8 +161,8 @@ export default function Dashboard() {
         <Text style={styles.signout}>{T('nav.signout')}</Text>
       </Pressable>
 
-      {/* Required by App Store guideline 5.1.1(v), and promised by the
-          withdrawal section of the consent screen. */}
+      {/* Required by App Store guideline 5.1.1(v) for any app that creates
+          accounts, and promised by the data note at onboarding. */}
       <Pressable onPress={confirmDelete} disabled={deleting}>
         <Text style={styles.delete}>
           {deleting ? T('acct.deleting') : T('acct.delete')}
