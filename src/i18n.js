@@ -40,6 +40,7 @@ const en = {
   'dash.last': 'Last session',
   'dash.never': 'No sessions yet',
   'dash.composite': 'Composite score',
+  'dash.trend_title': 'Your trend',
 
   'sleep.h1': 'Sleep & wellbeing',
   'sleep.sub': 'Sleep moves cognitive scores more than almost anything else, so we ask first.',
@@ -122,6 +123,7 @@ const zh = {
   'dash.last': '上次测试',
   'dash.never': '尚无记录',
   'dash.composite': '综合得分',
+  'dash.trend_title': '我的趋势',
 
   'sleep.h1': '睡眠与健康',
   'sleep.sub': '睡眠对认知分数的影响几乎超过其他所有因素，因此我们先询问这一项。',

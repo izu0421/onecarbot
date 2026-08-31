@@ -39,3 +39,23 @@ export function domainScores(results) {
     return { key: d.key, label: d.label, score: v === null ? null : Math.round(d.score(v)) };
   });
 }
+
+/** Firestore Timestamp, Date or ISO string -> Date. */
+function toDate(ts) {
+  if (!ts) return null;
+  return ts.toDate ? ts.toDate() : new Date(ts);
+}
+
+/**
+ * Shape sessions for the trend chart. `loadSessions` returns newest-first and
+ * a chart reads left-to-right in time, so this reverses. Sessions with no
+ * usable score are dropped rather than plotted as zero — a zero would read as
+ * a catastrophic result rather than as missing data.
+ */
+export function sessionsToPoints(sessions) {
+  return (sessions || [])
+    .slice()
+    .reverse()
+    .map((s) => ({ score: Math.round(compositeScore(s.results || {})), at: toDate(s.completedAt) }))
+    .filter((p) => Number.isFinite(p.score) && p.score > 0);
+}

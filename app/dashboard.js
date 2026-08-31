@@ -6,7 +6,8 @@ import { auth } from '../src/firebase';
 import { deleteAccount } from '../src/login';
 import { useAuth } from '../src/auth-context';
 import { loadSessions, loadUserDoc, setProbioticStart } from '../src/store';
-import { compositeScore, domainScores } from '../src/scoring';
+import { compositeScore, domainScores, sessionsToPoints } from '../src/scoring';
+import TrendChart from '../src/TrendChart';
 import { startDraft } from '../src/session';
 import { Button, Panel } from '../src/ui';
 import { colors, space, type } from '../src/theme';
@@ -122,6 +123,10 @@ export default function Dashboard() {
       </View>
 
       <Button title={T('dash.new_session')} onPress={begin} />
+
+      <Panel title={T('dash.trend_title')}>
+        <TrendChart points={sessionsToPoints(sessions)} />
+      </Panel>
 
       <Panel title={T('domain.panel_title')}>
         {latest ? (

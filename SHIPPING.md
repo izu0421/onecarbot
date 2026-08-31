@@ -128,9 +128,11 @@ questions.
 
 Not blockers, but the app is thinner than the web version until these land.
 
-- [ ] **`dev`** **Trend chart.** The dashboard shows the latest score and a delta
-      only. Watching the trend is the entire point. `react-native-svg` is already
-      installed and unused.
+- [x] **`dev`** **Trend chart.** Done — `src/TrendChart.js`, on the dashboard.
+      Fixed 0–100 axis on purpose: auto-scaling makes normal week-to-week wobble
+      look like a dramatic decline. Sessions with no usable score are dropped
+      rather than plotted as zero. Data shaping lives in `scoring.js` so it is
+      covered by `npm test`.
 - [ ] **`dev`** **Compliance capture.** `probiotic_compliance_days`,
       `_interval` and `_pct` currently always write `null`. That is the trial's
       adherence measure.

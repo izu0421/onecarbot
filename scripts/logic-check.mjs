@@ -1,4 +1,4 @@
-import { compositeScore, domainScores } from '../src/scoring.js';
+import { compositeScore, domainScores, sessionsToPoints } from '../src/scoring.js';
 import { makeMatrix, makeTrailNodes, makePalRound, scoreRt, MATRIX_SHAPES } from '../src/battery/tasks.js';
 
 let fail = 0;
@@ -50,6 +50,23 @@ ok('PAL: every trial has the right answer among 4 distinct options', palOk);
 ok('scoreRt averages only correct match trials',
    scoreRt([{ isMatch: true, rt: 300 }, { isMatch: true, rt: 500 }, { isMatch: false, rt: 100 }, { isMatch: true, rt: null }]) === 400);
 ok('scoreRt with no hits -> null', scoreRt([{ isMatch: false, rt: 200 }]) === null);
+
+// ── trend chart data shaping ──
+const good = { cog_numeric: 8 };            // -> 80
+const better = { cog_numeric: 10 };         // -> 100
+// loadSessions returns newest-first
+const sessions = [
+  { results: better, completedAt: new Date('2026-03-01') },
+  { results: good,   completedAt: new Date('2026-02-01') },
+];
+const pts = sessionsToPoints(sessions);
+ok('points come back oldest-first', pts.map(p => p.score).join(',') === '80,100');
+ok('dates survive as Date objects', pts[0].at instanceof Date && pts[0].at < pts[1].at);
+ok('Firestore Timestamp shape is handled',
+   sessionsToPoints([{ results: good, completedAt: { toDate: () => new Date('2026-02-01') } }])[0].at instanceof Date);
+ok('sessions with no usable score are dropped, not plotted as zero',
+   sessionsToPoints([{ results: {}, completedAt: new Date() }, ...sessions]).length === 2);
+ok('empty input is safe', sessionsToPoints([]).length === 0 && sessionsToPoints(undefined).length === 0);
 
 console.log(fail ? `\n${fail} FAILED` : '\nall passed');
 process.exit(fail ? 1 : 0);
